@@ -61,11 +61,4 @@ export const login = async (
   }
 }
 
-/**
- * Get user information by ID
- * GET /api/users/:id
- */
-export const getUserById = async (id: number): Promise<User> => {
-  const response = await fetchApi<{ data: User }>(`/users/${id}`)
-  return response.data
-}
+// getUserById moved to usersApi.ts

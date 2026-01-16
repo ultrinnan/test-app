@@ -48,6 +48,22 @@ The application will be available at:
 - **View logs:** `docker compose logs -f`
 - **Rebuild:** `docker compose up -d --build`
 
+## Database Seeding
+
+To populate the database with 50 test users:
+
+```bash
+docker compose exec backend npm run seed
+```
+
+Or if running backend locally:
+
+```bash
+cd backend && npm run seed
+```
+
+All seeded users have password: `password123`
+
 ## Environment Variables
 
 All configuration is in `.env` file. See `.env.sample` for template.

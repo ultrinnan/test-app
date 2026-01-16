@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import SignInPage from './pages/SignInPage'
 import SignUpPage from './pages/SignUpPage'
-import WelcomePage from './pages/WelcomePage'
+import DashboardPage from './pages/DashboardPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicRoute from './components/PublicRoute'
 
@@ -29,12 +29,16 @@ function App() {
             }
           />
           <Route
-            path="/welcome"
+            path="/dashboard"
             element={
               <ProtectedRoute>
-                <WelcomePage />
+                <DashboardPage />
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/welcome"
+            element={<Navigate to="/dashboard" replace />}
           />
         </Routes>
       </div>

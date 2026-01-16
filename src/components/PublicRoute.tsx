@@ -25,9 +25,9 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
     )
   }
 
-  // If user is authenticated, redirect to welcome page
+  // If user is authenticated, redirect to dashboard
   if (isAuthenticated) {
-    return <Navigate to="/welcome" replace />
+    return <Navigate to="/dashboard" replace />
   }
 
   return <>{children}</>

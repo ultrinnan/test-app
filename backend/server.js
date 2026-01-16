@@ -34,7 +34,7 @@ async function initDB() {
         password VARCHAR(255) NOT NULL,
         first_name VARCHAR(255) NOT NULL,
         last_name VARCHAR(255) NOT NULL,
-        avatar VARCHAR(500),
+        avatar VARCHAR(500) DEFAULT '',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
@@ -117,9 +117,9 @@ app.get('/api/users', async (req, res) => {
     const perPage = 6
     const offset = (page - 1) * perPage
 
+    // LIMIT and OFFSET must be integers, not placeholders in mysql2
     const [users] = await db.execute(
-      'SELECT id, email, first_name, last_name, avatar FROM users LIMIT ? OFFSET ?',
-      [perPage, offset]
+      `SELECT id, email, first_name, last_name, avatar FROM users LIMIT ${perPage} OFFSET ${offset}`
     )
 
     const [countResult] = await db.execute('SELECT COUNT(*) as total FROM users')
@@ -127,11 +127,11 @@ app.get('/api/users', async (req, res) => {
     const totalPages = Math.ceil(total / perPage)
 
     res.json({
-      data: users,
+      data: users || [],
       page,
       per_page: perPage,
       total,
-      total_pages: totalPages,
+      total_pages: totalPages || 1,
     })
   } catch (error) {
     console.error('Get users error:', error)

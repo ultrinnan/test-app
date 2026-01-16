@@ -20,8 +20,16 @@ import {
   AppBar,
   Toolbar,
 } from '@mui/material'
-import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon, Logout as LogoutIcon } from '@mui/icons-material'
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Add as AddIcon,
+  Logout as LogoutIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
+} from '@mui/icons-material'
 import { useAuth } from '../context/useAuth'
+import { useTheme } from '../context/ThemeContext'
 import * as usersApi from '../services/usersApi'
 import { User } from '../types/auth'
 import UserDialog from '../components/UserDialog'
@@ -29,6 +37,7 @@ import UserDialog from '../components/UserDialog'
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate()
   const { user: currentUser, logout } = useAuth()
+  const { mode, toggleTheme } = useTheme()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -129,6 +138,9 @@ const DashboardPage: React.FC = () => {
           <Typography variant="body2" sx={{ mr: 2 }}>
             Hello, {currentUser?.first_name}!
           </Typography>
+          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+            {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
           <Button color="inherit" startIcon={<LogoutIcon />} onClick={handleLogout}>
             Logout
           </Button>

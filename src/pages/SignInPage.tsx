@@ -9,12 +9,18 @@ import {
   Box,
   Alert,
   Link,
+  IconButton,
+  AppBar,
+  Toolbar,
 } from '@mui/material'
+import { LightMode as LightModeIcon, DarkMode as DarkModeIcon } from '@mui/icons-material'
 import { useAuth } from '../context/useAuth'
+import { useTheme } from '../context/ThemeContext'
 
 const SignInPage: React.FC = () => {
   const navigate = useNavigate()
   const { login } = useAuth()
+  const { mode, toggleTheme } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -36,15 +42,23 @@ const SignInPage: React.FC = () => {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+    <>
+      <AppBar position="static">
+        <Toolbar sx={{ justifyContent: 'flex-end' }}>
+          <IconButton color="inherit" onClick={toggleTheme}>
+            {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Container component="main" maxWidth="xs">
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
         <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
           <Typography component="h1" variant="h4" align="center" gutterBottom>
             Sign In
@@ -107,6 +121,7 @@ const SignInPage: React.FC = () => {
         </Paper>
       </Box>
     </Container>
+    </>
   )
 }
 

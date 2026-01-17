@@ -111,16 +111,26 @@ const DashboardPage: React.FC = () => {
 
   const handleSaveUser = async (userData: { email: string; first_name: string; last_name: string }) => {
     if (dialogMode === 'create') {
-      const newUser = await usersApi.createUser(userData)
-      // Update local state - add new user
-      setUsers([...users, newUser])
-      // If we're on the last page and it's not full, stay on current page
-      // Otherwise, refresh to get updated pagination
-      fetchUsers(page)
+      try {
+        const newUser = await usersApi.createUser(userData)
+        // Refresh to get updated pagination (don't await to avoid blocking dialog close)
+        fetchUsers(page).catch((err) => {
+          // Silently handle error - user list will refresh on next page change
+          // Error is already handled in fetchUsers which sets error state
+        })
+      } catch (error) {
+        // Re-throw error so UserDialog can display it
+        throw error
+      }
     } else if (selectedUser) {
-      const updatedUser = await usersApi.updateUser(selectedUser.id, userData)
-      // Update local state - replace updated user
-      setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)))
+      try {
+        const updatedUser = await usersApi.updateUser(selectedUser.id, userData)
+        // Update local state - replace updated user
+        setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)))
+      } catch (error) {
+        // Re-throw error so UserDialog can display it
+        throw error
+      }
     }
   }
 
@@ -129,7 +139,7 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+    <Box sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: mode === 'dark' ? 'rgba(81, 81, 81, 1)' : '#f5f5f5' }}>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -138,7 +148,12 @@ const DashboardPage: React.FC = () => {
           <Typography variant="body2" sx={{ mr: 2 }}>
             Hello, {currentUser?.first_name}!
           </Typography>
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+          <IconButton
+            color="inherit"
+            onClick={toggleTheme}
+            sx={{ mr: 1 }}
+            aria-label={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
+          >
             {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
           </IconButton>
           <Button color="inherit" startIcon={<LogoutIcon />} onClick={handleLogout}>
@@ -171,7 +186,7 @@ const DashboardPage: React.FC = () => {
           ) : (
             <>
               <TableContainer>
-                <Table>
+                <Table aria-label="Users table">
                   <TableHead>
                     <TableRow>
                       <TableCell>Avatar</TableCell>
@@ -223,13 +238,18 @@ const DashboardPage: React.FC = () => {
                             </TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell align="right">
-                              <IconButton color="primary" onClick={() => handleEdit(user)}>
+                              <IconButton
+                                color="primary"
+                                onClick={() => handleEdit(user)}
+                                aria-label={`Edit user ${user.email}`}
+                              >
                                 <EditIcon />
                               </IconButton>
                               <IconButton
                                 color="error"
                                 onClick={() => handleDelete(user.id)}
                                 disabled={isCurrentUser}
+                                aria-label={isCurrentUser ? 'Cannot delete your own account' : `Delete user ${user.email}`}
                                 title={isCurrentUser ? 'You cannot delete your own account' : 'Delete user'}
                               >
                                 <DeleteIcon />

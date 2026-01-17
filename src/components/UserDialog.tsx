@@ -72,12 +72,12 @@ const UserDialog: React.FC<UserDialogProps> = ({ open, onClose, onSave, user, mo
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <DialogTitle>{mode === 'create' ? 'Create New User' : 'Edit User'}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
             {error && (
-              <Box sx={{ color: 'error.main', fontSize: '0.875rem' }}>{error}</Box>
+              <Box sx={{ color: 'error.main', fontSize: '0.875rem', mb: 1 }} role="alert" data-testid="error-message">{error}</Box>
             )}
             <TextField
               autoFocus
